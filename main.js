@@ -59,7 +59,7 @@ app.patch("/products/:productId", async (req, res) => {
     }
 })
 
-app.get("/products", async(req, res) =>{
+app.get("/products", async(_req, res) =>{
     try{
         const products = await client.productItem.findMany();
             res.status(200).json({
@@ -67,6 +67,32 @@ app.get("/products", async(req, res) =>{
                 message: "Successfully fetched product items",
                 data: products
             })
+    }catch(e){
+        res.status(500).json({
+            status: "Error",
+            message: "Something went wrong. Try again later"
+        })
+    }
+})
+
+app.get("/products/:productId", async(req, res) => {
+    const { productId} = req.params;
+    try{
+        const product = await client.productItem.findFirst({
+            where: {
+                id: productId
+            }
+        })
+        if(!product){
+            res.status(404).json({
+                status: "Error",
+                message: "Product not found"
+            })
+        }
+        res.status(200).json({
+            status: "Success",
+            data: product
+        })
     }catch(e){
         res.status(500).json({
             status: "Error",
