@@ -6,9 +6,6 @@ const client = new PrismaClient();
 const app = express();
 app.use(express.json());
 
-app.get("/products", (_req, res) =>{
-    res.send("Getting all products")
-})
 app.post("/products", validateProduct, async (req, res) => {
     const { productTitle, productDescription, unitsLeft, pricePerUnit} = req.body;
     try{
@@ -55,6 +52,22 @@ app.patch("/products/:productId", async (req, res) => {
         })
     }catch(e){
         console.log(e)
+        res.status(500).json({
+            status: "Error",
+            message: "Something went wrong. Try again later"
+        })
+    }
+})
+
+app.get("/products", async(req, res) =>{
+    try{
+        const products = await client.productItem.findMany();
+            res.status(200).json({
+                status: "Success",
+                message: "Successfully fetched product items",
+                data: products
+            })
+    }catch(e){
         res.status(500).json({
             status: "Error",
             message: "Something went wrong. Try again later"
