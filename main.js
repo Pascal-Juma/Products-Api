@@ -101,4 +101,24 @@ app.get("/products/:productId", async(req, res) => {
     }
 })
 
+app.delete("/products/:productId", async (req, res) => {
+    const { productId } = req.params;
+    try{
+        await client.productItem.delete({
+            where: {
+                id: productId
+            }
+        })
+        res.status(200).json({
+            status: "Success",
+            message: "Product Item deleted successfully"
+        })
+    }catch(e){
+        res.status(500).json({
+            status: "Error",
+            message: "Something went wrong. Try again later"
+        })
+    }
+})
+
 export default app;
